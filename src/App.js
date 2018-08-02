@@ -3,6 +3,7 @@ import { Typography } from '@material-ui/core';
 import axios from 'axios';
 import { Form, withFormik } from 'formik';
 import React from 'react';
+import { connect } from 'react-redux';
 import './App.css';
 import { AdditionalFeatures, Backend, ContainedButtons, FrontEnd, Mobile } from './components';
 
@@ -48,16 +49,25 @@ const handleSubmit = (values) => {
     })
 }
 
+
+@connect((store) => {
+  return {
+    user: store.loeHours
+  };
+})
 class App extends React.Component {
  render() {
-    const { handleChange, values } = this.props;
+
+    const { handleChange, values, user } = this.props;
     const {  isAnyCMSRequired, oneWayThirdPartyIntegrationRequired, twoWayThirdPartyIntegrationRequired, activeDirectoryIntegrationRequired, 
          isBasicChattingRequiredB, isComplicatedB, isProperChatSolutionRequiredB, numberOfInterfacesB, requireConfigurableWorkflow, workflowLogicRequired, isAdminPanelRequired,
         isBasicChattingRequiredF, isComplicatedF,  isProperChatSolutionRequiredF, isConsumerFrontEndRequired, numberOfInterfacesF, isAndroidAppRequired, isBasicChattingRequiredM, 
         isComplicatedM, isIPhoneAppRequired, isLocationBasedWorkRequired, isOfflineSupportRequired, isProperChatSolutionRequiredM, needLowCostSolution, numberOfInterfacesM 
          } =   values
+         console.log('hehehehe', user);
          return (
         <Form>
+
           <div className="">
             <Typography variant="headline" gutterBottom={true} >
               LOE Request
