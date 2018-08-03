@@ -1,7 +1,7 @@
 
 
 const defaultState = {
-  loeHours: {
+  LOEHours: {
  additionalFeatures: 0,
  mobile: 0,
  frontend: 0,
@@ -13,7 +13,7 @@ const LOEFormReducer = (state = defaultState, action) => {
     case 'GET_HOURS':
       return {
         ...state,
-        loeHours: {
+        LOEHours: {
           mobile: action.payload.mobile,
           frontend: action.payload.frontend,
           backend: action.payload.backend,

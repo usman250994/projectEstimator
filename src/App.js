@@ -6,65 +6,19 @@ import React from 'react';
 import { connect } from 'react-redux';
 import './App.css';
 import { AdditionalFeatures, Backend, ContainedButtons, FrontEnd, Mobile } from './components';
-
-const handleSubmit = (values) => {
-  const req = {
-    additionalFeatures: {
-      IsAnyCMSRequired: values.isAnyCMSRequired,
-      OneWayThirdPartyIntegrationRequired: values.oneWayThirdPartyIntegrationRequired,
-      TwoWayThirdPartyIntegrationRequired: values.twoWayThirdPartyIntegrationRequired,
-    },
-    backend: {
-      ActiveDirectoryIntegrationRequired: values.activeDirectoryIntegrationRequired,
-      IsBasicChattingRequired: values.isBasicChattingRequiredB,
-      IsComplicated: values.isComplicatedB,
-      IsProperChatSolutionRequired: values.isProperChatSolutionRequiredB,
-      NumberOfInterfaces: values.numberOfInterfacesB,
-      RequireConfigurableWorkflow: values.requireConfigurableWorkflow,
-      WorkflowLogicRequired: values.workflowLogicRequired
-    },
-    frontend: {
-      IsAdminPanelRequired: values.isAdminPanelRequired,
-      IsBasicChattingRequired: values.isBasicChattingRequiredF,
-      IsComplicated: values.isComplicatedF,
-      IsConsumerFrontendRequired: values.isConsumerFrontEndRequired,
-      IsProperChatSolutionRequired: values.isProperChatSolutionRequiredF,
-      NumberOfInterfaces: values.numberOfInterfacesF,
-    },
-    mobile: {
-      IsAndroidAppRequired: values.isAndroidAppRequired,
-      IsBasicChattingRequired: values.isBasicChattingRequiredM,
-      IsComplicated: values.isComplicatedM,
-      IsIPhoneAppRequired: values.isIPhoneAppRequired,
-      IsLocationBasedWorkRequired: values.isLocationBasedWorkRequired,
-      IsOfflineSupportRequired: values.isOfflineSupportRequired,
-      IsProperChatSolutionRequired: values.isProperChatSolutionRequiredM,
-      NeedLowCostSolution: values.needLowCostSolution,
-      NumberOfInterfaces: values.numberOfInterfacesM,
-   },
-  }
-  axios.post(`http://172.16.0.155:4000/completeForm`, req )
-    .then(res => {
-     console.log(res.data);
-    })
-}
+import {fetchHours} from './actions';
 
 
-@connect((store) => {
-  return {
-    user: store.loeHours
-  };
-})
 class App extends React.Component {
  render() {
 
-    const { handleChange, values, user } = this.props;
+    const { handleChange, values, hours } = this.props;
     const {  isAnyCMSRequired, oneWayThirdPartyIntegrationRequired, twoWayThirdPartyIntegrationRequired, activeDirectoryIntegrationRequired, 
          isBasicChattingRequiredB, isComplicatedB, isProperChatSolutionRequiredB, numberOfInterfacesB, requireConfigurableWorkflow, workflowLogicRequired, isAdminPanelRequired,
         isBasicChattingRequiredF, isComplicatedF,  isProperChatSolutionRequiredF, isConsumerFrontEndRequired, numberOfInterfacesF, isAndroidAppRequired, isBasicChattingRequiredM, 
         isComplicatedM, isIPhoneAppRequired, isLocationBasedWorkRequired, isOfflineSupportRequired, isProperChatSolutionRequiredM, needLowCostSolution, numberOfInterfacesM 
          } =   values
-         console.log('hehehehe', user);
+        const {additionalFeatures, mobile, frontend, backend }= hours;
          return (
         <Form>
 
@@ -113,12 +67,26 @@ class App extends React.Component {
           />
          <ContainedButtons/>
       </div>
+      <div>
+      
+      <label>Additional Features:</label> {additionalFeatures} <label>Mobile:</label> {mobile} <label>Frontend:</label> {frontend} <label>Backend:</label> {backend}
+        
+      </div>
         </Form>
       
     );
   }
 }
-export default withFormik(
+
+const mapStateToProps = state => ({
+  hours: state.LOEFormReducer.LOEHours,
+});
+
+const mapDispatchToProps = dispatch => ({
+  fetchHours: (values) => dispatch(fetchHours(values)),
+})
+
+export default  connect(mapStateToProps, mapDispatchToProps)(withFormik(
   {
     mapPropsToValues: props => ({
       isAnyCMSRequired: false,
@@ -148,6 +116,46 @@ export default withFormik(
       numberOfInterfacesM: '',
     }),
     handleSubmit: (values, { props }) => {
-      handleSubmit(values);
+      const req = {
+        additionalFeatures: {
+          IsAnyCMSRequired: values.isAnyCMSRequired,
+          OneWayThirdPartyIntegrationRequired: values.oneWayThirdPartyIntegrationRequired,
+          TwoWayThirdPartyIntegrationRequired: values.twoWayThirdPartyIntegrationRequired,
+        },
+        backend: {
+          ActiveDirectoryIntegrationRequired: values.activeDirectoryIntegrationRequired,
+          IsBasicChattingRequired: values.isBasicChattingRequiredB,
+          IsComplicated: values.isComplicatedB,
+          IsProperChatSolutionRequired: values.isProperChatSolutionRequiredB,
+          NumberOfInterfaces: values.numberOfInterfacesB,
+          RequireConfigurableWorkflow: values.requireConfigurableWorkflow,
+          WorkflowLogicRequired: values.workflowLogicRequired
+        },
+        frontend: {
+          IsAdminPanelRequired: values.isAdminPanelRequired,
+          IsBasicChattingRequired: values.isBasicChattingRequiredF,
+          IsComplicated: values.isComplicatedF,
+          IsConsumerFrontendRequired: values.isConsumerFrontEndRequired,
+          IsProperChatSolutionRequired: values.isProperChatSolutionRequiredF,
+          NumberOfInterfaces: values.numberOfInterfacesF,
+        },
+        mobile: {
+          IsAndroidAppRequired: values.isAndroidAppRequired,
+          IsBasicChattingRequired: values.isBasicChattingRequiredM,
+          IsComplicated: values.isComplicatedM,
+          IsIPhoneAppRequired: values.isIPhoneAppRequired,
+          IsLocationBasedWorkRequired: values.isLocationBasedWorkRequired,
+          IsOfflineSupportRequired: values.isOfflineSupportRequired,
+          IsProperChatSolutionRequired: values.isProperChatSolutionRequiredM,
+          NeedLowCostSolution: values.needLowCostSolution,
+          NumberOfInterfaces: values.numberOfInterfacesM,
+       },
+      }
+      axios.post(`http://172.16.0.155:4000/completeForm`, req )
+        .then(res => {
+         console.log(res.data);
+         props.fetchHours(res.data);
+        })
+
     }
-  })(App);
+  })(App));
